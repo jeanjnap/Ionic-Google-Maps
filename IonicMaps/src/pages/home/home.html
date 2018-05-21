@@ -4,13 +4,14 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Find peaple around you!</h2>
-  <p>
-    Longitude: {{ longitude }}
-    Latitude: {{ latitude }} 
-  </p>
+<ion-content>
 
-  <button ion-button (click)="getPosition()" >Get current location</button>
-  
+  <div #map id="map"></div>
+
+  <ion-row center>
+    <ion-col text-center>
+      <button ion-button (click)="getPosition()">Get current location</button>
+    </ion-col>
+  </ion-row>
+
 </ion-content>
