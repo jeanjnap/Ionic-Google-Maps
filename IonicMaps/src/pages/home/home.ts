@@ -9,9 +9,11 @@ declare var google: any;
 })
 export class HomePage {
 
+
   @ViewChild('map') mapRef: ElementRef;
 
   map: any;
+  markers = [];
 
   longitude;
   latitude;
@@ -25,6 +27,7 @@ export class HomePage {
 
   ionViewDidLoad() {
     this.getPosition();
+    this.watchPosition();
   }
 
   getPosition() {
@@ -34,7 +37,7 @@ export class HomePage {
       this.showMap();
       console.log(position.coords.longitude + ' - ' + position.coords.latitude);
     }, error => {
-      alert(error);
+      alert(error.message);
     });
   }
 
@@ -52,18 +55,45 @@ export class HomePage {
 
     this.map = new google.maps.Map(this.mapRef.nativeElement, options);
 
+    this.addMarker(location);
+
+
+  }
+
+  watchPosition() {
+    this.geolocation.watchPosition().subscribe(position => {
+      this.longitude = position.coords.longitude;
+      this.latitude = position.coords.latitude;
+
+      var location = {lat: this.latitude, lng: this.longitude};
+      this.deleteMarkers(location)
+    }, error => {
+      alert(error.message);
+    });
+  }
+
+  addMarker(location) {
     var marker = new google.maps.Marker({
       position: location,
       map: this.map
     });
+    this.markers.push(marker);
+  }
 
-    
-    var georssLayer = new google.maps.KmlLayer({
-      url: 'georss.gml'
+  setMapOnAll(map) {
+    for (var i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(map);
+    }
+  }
 
-    });
-    georssLayer.setMap(this.map);
+  deleteMarkers(location) {
+    this.clearMarkers();
+    this.markers = [];
+    this.addMarker(location)
+  }
 
+  clearMarkers() {
+    this.setMapOnAll(null);
   }
 
 
